@@ -1,0 +1,19 @@
+name: Java CI
+on:
+  - push
+jobs:
+  build:
+    runs-on: ubuntu-lastest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup JAVA JDK
+        uses: actions/setup-java@v3.5.1
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - name: Build with Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: build
+      - name: Publish code coverage
+        uses: paambaati/codeclimate-action@v3.0.0
