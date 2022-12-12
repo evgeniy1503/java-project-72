@@ -4,16 +4,16 @@ plugins {
     id 'application'
 }
 
+group 'hexlet.code'
+version '1.0-SNAPSHOT'
+
 application {
-    mainClass = ' hexlet.code.App'
+    mainClass = 'hexlet.code.App'
 }
 
 compileJava {
     options.release = 17
 }
-
-group 'hexlet.code'
-version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -28,4 +28,8 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+checkstyle {
+    toolVersion '10.0'
 }
