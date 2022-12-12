@@ -2,6 +2,9 @@ plugins {
     id 'java'
     id 'checkstyle'
     id 'application'
+    id 'com.adarshr.test-logger' version '3.2.0'
+    id 'jacoco'
+    id 'com.github.ben-manes.versions' version '0.42.0'
 }
 
 group 'hexlet.code'
@@ -32,4 +35,26 @@ test {
 
 checkstyle {
     toolVersion '10.0'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+jacocoTestReport {
+    reports {
+        xml.required = true
+    }
+}
+
+test {
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test
+}
+
+testlogger {
+    showStandardStreams true
 }
