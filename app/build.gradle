@@ -5,7 +5,6 @@ plugins {
     id 'com.adarshr.test-logger' version '3.2.0'
     id 'jacoco'
     id 'com.github.ben-manes.versions' version '0.42.0'
-    id 'io.ebean' version '13.6.0'
 }
 
 group 'hexlet.code'
@@ -23,39 +22,11 @@ repositories {
     mavenCentral()
 }
 
-task stage(dependsOn: ['clean', 'installDist'])
-installDist.mustRunAfter clean
-
 dependencies {
-    testImplementation "org.mockito:mockito-core:3.+"
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
-    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.8.2'
-    testImplementation 'io.javalin:javalin-bundle:5.2.0'
-    testImplementation 'org.assertj:assertj-core:3.22.0'
-    testImplementation 'com.konghq:unirest-java:3.13.6'
-    testImplementation 'io.ebean:ebean-test:12.15.1'
-
-    implementation 'io.javalin:javalin:4.3.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.0'
+    implementation 'io.javalin:javalin:5.2.0'
     implementation 'org.slf4j:slf4j-simple:2.0.5'
-
-    implementation 'io.ebean:ebean:13.10.1'
-    annotationProcessor 'io.ebean:querybean-generator:13.10.1'
-    implementation 'io.ebean:ebean-annotation:8.3'
-    implementation 'io.ebean:ebean-migration:13.6.0'
-    implementation 'io.ebean:ebean-ddl-generator:13.10.1'
-    implementation 'io.ebean:ebean-querybean:12.15.1'
-
-    implementation 'com.h2database:h2:2.1.214'
-    implementation 'org.postgresql:postgresql:42.5.1'
-
-    implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.5'
-    implementation 'javax.activation:activation:1.1.1'
-
-    implementation 'org.thymeleaf:thymeleaf:3.0.12.RELEASE'
-    implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.0.0'
-    implementation 'org.thymeleaf.extras:thymeleaf-extras-java8time:3.0.4.RELEASE'
-    implementation 'org.webjars:bootstrap:5.1.3'
-
 }
 
 test {
@@ -86,9 +57,4 @@ jacocoTestReport {
 
 testlogger {
     showStandardStreams true
-}
-
-task generateMigrations(type: JavaExec) {
-    classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'hexlet.code.MigrationGenerator'
 }

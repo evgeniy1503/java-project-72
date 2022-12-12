@@ -17,15 +17,6 @@ install:
 report:
 	make -C app report
 
-start:
-	make -C app start
-
-generate-migrations:
-	make -C app generate-migrations
-
-tart-dist:
-	make -C app start-dist
-
 build-run: build
 
 .PHONY: build
