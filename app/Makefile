@@ -22,4 +22,10 @@ install:
 report:
 	./gradlew jacocoTestReport
 
+start-dist:
+	APP_ENV=production ./build/install/app/bin/app
+
+start:
+	APP_ENV=development ./gradlew run
+
 .PHONY: build
