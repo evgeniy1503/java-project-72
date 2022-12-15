@@ -1,6 +1,5 @@
 package hexlet.code;
 
-import hexlet.code.controllers.UrlController;
 import hexlet.code.controllers.WelcomeController;
 import io.javalin.plugin.rendering.template.JavalinThymeleaf;
 import io.javalin.Javalin;
@@ -8,10 +7,6 @@ import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.extras.java8time.dialect.Java8TimeDialect;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
-
-import static io.javalin.apibuilder.ApiBuilder.path;
-import static io.javalin.apibuilder.ApiBuilder.get;
-import static io.javalin.apibuilder.ApiBuilder.post;
 
 
 public  class App {
@@ -21,21 +16,11 @@ public  class App {
         return Integer.valueOf(port);
     }
 
-
-    private static String getMode() {
-        return System.getenv().getOrDefault("APP_ENV", "development");
-    }
-
-    private static boolean isProduction() {
-        return getMode().equals("production");
-    }
-
     private static TemplateEngine createTemplateEngine() {
 
         TemplateEngine templateEngine = new TemplateEngine();
         ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
         templateResolver.setPrefix("/templates/");
-        templateResolver.setCharacterEncoding("UTF-8");
 
         templateEngine.addTemplateResolver(templateResolver);
         templateEngine.addDialect(new LayoutDialect());
@@ -46,33 +31,15 @@ public  class App {
 
     private static void addRoutes(Javalin app) {
         app.get("/", WelcomeController.welcome);
-
-        app.post("urls", UrlController.addUrl);
-        app.routes(() -> {
-            path("urls", () -> {
-                get(UrlController.listUrls);
-                post(UrlController.addUrl);
-                path("{id}", () -> {
-                    get(UrlController.showUrl);
-                });
-            });
-        });
     }
 
     public static Javalin getApp() {
         Javalin app = Javalin.create(config -> {
-            if (!isProduction()) {
-                config.enableDevLogging();
-            }
-            config.enableWebjars();
+            config.enableDevLogging();
             JavalinThymeleaf.configure(createTemplateEngine());
         });
 
         addRoutes(app);
-
-        app.before(ctx -> {
-            ctx.attribute("ctx", ctx);
-        });
 
         return app;
     }

@@ -1,0 +1,16 @@
+datasource:
+  default: ${APP_ENV}
+  development:
+    username: sa
+    password: sa
+    url: "jdbc:h2:./mydatabase"
+  production:
+    username: ${PGUSER}
+    password: ${PGPASSWORD}
+    url: ${DATABASE_URL}
+
+ebean:
+  ddl:
+    run: true
+    generate: true
+
