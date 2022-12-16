@@ -21,6 +21,7 @@ public  class App {
         TemplateEngine templateEngine = new TemplateEngine();
         ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
         templateResolver.setPrefix("/templates/");
+        templateResolver.setCharacterEncoding("UTF-8");
 
         templateEngine.addTemplateResolver(templateResolver);
         templateEngine.addDialect(new LayoutDialect());
@@ -36,6 +37,7 @@ public  class App {
     public static Javalin getApp() {
         Javalin app = Javalin.create(config -> {
             config.enableDevLogging();
+            config.enableWebjars();
             JavalinThymeleaf.configure(createTemplateEngine());
         });
 
