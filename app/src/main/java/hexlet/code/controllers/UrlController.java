@@ -4,7 +4,6 @@ import hexlet.code.domain.Url;
 import hexlet.code.domain.query.QUrl;
 import io.ebean.PagedList;
 import io.javalin.http.Handler;
-import io.javalin.http.NotFoundResponse;
 
 import java.net.URL;
 import java.util.List;
@@ -26,7 +25,6 @@ public final class UrlController {
         String url = fullUrl.getProtocol() + "://" + fullUrl.getAuthority();
 
         List<Url> list = new QUrl().findList();
-
         for (Url oldUrl : list) {
             if (oldUrl.getName().equals(url)) {
                 ctx.sessionAttribute("flash", "Страница уже существует");
@@ -72,17 +70,6 @@ public final class UrlController {
     };
 
     public static Handler showUrl = ctx -> {
-        int id = ctx.pathParamAsClass("id", Integer.class).getOrDefault(null);
 
-        Url url = new QUrl()
-                .id.equalTo(id)
-                .findOne();
-
-        if (url == null) {
-            throw new NotFoundResponse();
-        }
-
-        ctx.attribute("url", url);
-        ctx.render("urls/show.html");
     };
 }

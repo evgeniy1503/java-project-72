@@ -10,5 +10,6 @@ datasource:
     url: ${JDBC_DATABASE_URL}
 
 ebean:
-  migration:
+  ddl:
     run: true
+    generate: true
