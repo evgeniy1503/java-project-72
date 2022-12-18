@@ -13,31 +13,31 @@ import java.util.stream.IntStream;
 public final class UrlController {
 
     public static Handler addUrl = ctx -> {
-      String paramUrl = ctx.formParam("url");
-      if (!(paramUrl.startsWith("https") || paramUrl.startsWith("http"))) {
-          ctx.sessionAttribute("flash", "Некорректный URL");
-          ctx.sessionAttribute("flash-type", "danger");
-          ctx.redirect("/");
-          return;
-      }
+        String paramUrl = ctx.formParam("url");
+        if (!(paramUrl.startsWith("https") || paramUrl.startsWith("http"))) {
+            ctx.sessionAttribute("flash", "Некорректный URL");
+            ctx.sessionAttribute("flash-type", "danger");
+            ctx.redirect("/");
+            return;
+        }
 
-      URL fullUrl = new URL(paramUrl);
-      String url = fullUrl.getProtocol() + "://" + fullUrl.getAuthority();
+        URL fullUrl = new URL(paramUrl);
+        String url = fullUrl.getProtocol() + "://" + fullUrl.getAuthority();
 
-      List<Url> list = new QUrl().findList();
-      for (Url oldUrl : list) {
-          if (oldUrl.getName().equals(url)) {
-              ctx.sessionAttribute("flash", "Страница уже существует");
-              ctx.sessionAttribute("flash-type", "success");
-              ctx.redirect("/");
-              return;
-          }
-      }
-      Url newUrl = new Url(url);
-      newUrl.save();
-      ctx.sessionAttribute("flash", "Страница успешно добавлена");
-      ctx.sessionAttribute("flash-type", "success");
-      ctx.redirect("/urls");
+        List<Url> list = new QUrl().findList();
+        for (Url oldUrl : list) {
+            if (oldUrl.getName().equals(url)) {
+                ctx.sessionAttribute("flash", "Страница уже существует");
+                ctx.sessionAttribute("flash-type", "success");
+                ctx.redirect("/");
+                return;
+            }
+        }
+        Url newUrl = new Url(url);
+        newUrl.save();
+        ctx.sessionAttribute("flash", "Страница успешно добавлена");
+        ctx.sessionAttribute("flash-type", "success");
+        ctx.redirect("/urls");
     };
 
     public static Handler listUrls = ctx -> {
