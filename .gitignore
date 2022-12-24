@@ -1,0 +1,9 @@
+build
+
+.idea
+
+app/.gradle
+
+app/.idea
+
+*.db
