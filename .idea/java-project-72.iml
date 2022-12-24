@@ -2,7 +2,21 @@
 <module type="JAVA_MODULE" version="4">
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
-    <content url="file://$MODULE_DIR$" />
+    <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/app/.gradle/7.4/vcsMetadata" />
+      <excludeFolder url="file://$MODULE_DIR$/app/.gradle/7.4.2/vcsMetadata" />
+      <excludeFolder url="file://$MODULE_DIR$/app/.gradle/7.5.1/vcsMetadata" />
+      <excludeFolder url="file://$MODULE_DIR$/app/build/classes/java/test" />
+      <excludeFolder url="file://$MODULE_DIR$/app/build/generated/sources/annotationProcessor/java/test" />
+      <excludeFolder url="file://$MODULE_DIR$/app/build/generated/sources/headers" />
+      <excludeFolder url="file://$MODULE_DIR$/app/build/reports/tests" />
+      <excludeFolder url="file://$MODULE_DIR$/app/build/resources/test" />
+      <excludeFolder url="file://$MODULE_DIR$/app/build/tmp/compileTestJava" />
+      <excludeFolder url="file://$MODULE_DIR$/app/build/tmp/expandedArchives" />
+      <excludeFolder url="file://$MODULE_DIR$/app/build/tmp/test" />
+      <excludeFolder url="file://$MODULE_DIR$/app/build/jacoco" />
+      <excludeFolder url="file://$MODULE_DIR$/app/build/test-results" />
+    </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
