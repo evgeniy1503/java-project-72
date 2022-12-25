@@ -15,13 +15,13 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class AppTest {
+class AppTest {
 
     private static Javalin app;
     private static String baseUrl;
 
     @BeforeAll
-    static  void beforeAll() {
+    public static void beforeAll() {
         app = App.getApp();
         app.start();
         int port = app.port();
@@ -29,12 +29,12 @@ public class AppTest {
     }
 
     @AfterAll
-    static void afterAll() {
+    public static void afterAll() {
         app.stop();
     }
 
     @BeforeEach
-    static void beforeEach() {
+    void beforeEach() {
         Database db = DB.getDefault();
         db.truncate("url");
     }
