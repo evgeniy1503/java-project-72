@@ -34,7 +34,7 @@ public class AppTest {
     }
 
     @BeforeEach
-    void beforeEach() {
+    static void beforeEach() {
         Database db = DB.getDefault();
         db.truncate("url");
     }
