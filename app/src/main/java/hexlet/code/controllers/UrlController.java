@@ -4,7 +4,9 @@ import hexlet.code.domain.Url;
 import hexlet.code.domain.query.QUrl;
 import io.ebean.PagedList;
 import io.javalin.http.Handler;
+import org.apache.commons.validator.routines.UrlValidator;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,26 +15,28 @@ import java.util.stream.IntStream;
 public final class UrlController {
 
     public static Handler addUrl = ctx -> {
+
         String paramUrl = ctx.formParam("url");
-        if (!(paramUrl.startsWith("https") || paramUrl.startsWith("http"))) {
+
+        if (!isCorrectUrl(paramUrl)) {
             ctx.sessionAttribute("flash", "Некорректный URL");
             ctx.sessionAttribute("flash-type", "danger");
             ctx.redirect("/");
             return;
         }
 
-        URL fullUrl = new URL(paramUrl);
-        String url = fullUrl.getProtocol() + "://" + fullUrl.getAuthority();
+        String url = buildUrl(paramUrl);
 
         List<Url> list = new QUrl().findList();
         for (Url oldUrl : list) {
             if (oldUrl.getName().equals(url)) {
                 ctx.sessionAttribute("flash", "Страница уже существует");
-                ctx.sessionAttribute("flash-type", "success");
-                ctx.redirect("/");
+                ctx.sessionAttribute("flash-type", "info");
+                ctx.redirect("/urls");
                 return;
             }
         }
+
         Url newUrl = new Url(url);
         newUrl.save();
         ctx.sessionAttribute("flash", "Страница успешно добавлена");
@@ -57,6 +61,7 @@ public final class UrlController {
 
         int lastPage = pagedUrls.getTotalPageCount() + 1;
         int currentPage = pagedUrls.getPageIndex() + 1;
+
         List<Integer> pages = IntStream
                 .range(1, lastPage)
                 .boxed()
@@ -70,6 +75,22 @@ public final class UrlController {
     };
 
     public static Handler showUrl = ctx -> {
+        long id = ctx.pathParamAsClass("id", Long.class).getOrDefault(null);
 
+        Url url = new QUrl()
+                .id.equalTo(id)
+                .findOne();
+        ctx.attribute("url", url);
+        ctx.render("urls/show.html");
     };
+
+    private static boolean isCorrectUrl(String url) {
+        UrlValidator urlValidator = UrlValidator.getInstance();
+        return urlValidator.isValid(url);
+    }
+
+    private static String buildUrl(String url) throws MalformedURLException {
+        URL fullUrl = new URL(url);
+        return fullUrl.getProtocol() + "://" + fullUrl.getAuthority();
+    }
 }
