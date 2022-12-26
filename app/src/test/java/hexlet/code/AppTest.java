@@ -3,7 +3,6 @@ package hexlet.code;
 import hexlet.code.domain.Url;
 import hexlet.code.domain.query.QUrl;
 import io.ebean.DB;
-import io.ebean.Database;
 
 import io.ebean.Transaction;
 import io.javalin.Javalin;
@@ -11,7 +10,11 @@ import io.javalin.Javalin;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
