@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.w3.org/1999/xhtml"
       layout:decorate="~{layouts/application.html}">
 
 <head>
@@ -23,8 +23,8 @@
             <td>
                 <a th:href="@{/urls/{id}(id=*{getId()})}" th:text="${#strings.abbreviate(url.getName(), 30)}"></a>
             </td>
-            <td></td>
-            <td</td>
+            <td th:text="*{getUrlCheck().isEmpty() ? '' : #temporals.format(getUrlCheck().get(getUrlCheck().size() - 1).getCreatedAt(), 'dd/MM/yyyy HH:mm')}"></td>
+            <td th:text="*{getUrlCheck().isEmpty() ? '' : getUrlCheck().get(getUrlCheck().size() - 1).getStatusCode()}"></td>
         </tr>
         </tbody>
     </table>
