@@ -15,14 +15,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class ProcessorUrl {
-    public static boolean isCorrectUrl(String url) {
-        UrlValidator urlValidator = UrlValidator.getInstance();
-        return urlValidator.isValid(url);
-    }
-
-    public static String buildUrl(String url) throws MalformedURLException {
-        URL fullUrl = new URL(url);
-        return fullUrl.getProtocol() + "://" + fullUrl.getAuthority();
+    public static String getUrl(String urlParam) throws MalformedURLException {
+        if (!(urlParam.startsWith("https") || urlParam.startsWith("http"))) {
+            return null;
+        } else {
+            URL fullUrl = new URL(urlParam);
+            return fullUrl.getProtocol() + "://" + fullUrl.getAuthority();
+        }
     }
 
     public static boolean haveConnect(Url url) throws IOException {

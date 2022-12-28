@@ -15,16 +15,15 @@ public final class UrlController {
 
     public static Handler addUrl = ctx -> {
 
-        String paramUrl = ctx.formParam("url");
+        String url = ProcessorUrl.getUrl(ctx.formParam("url"));
 
-        if (!ProcessorUrl.isCorrectUrl(paramUrl)) {
+        if (url == null) {
             ctx.sessionAttribute("flash", "Некорректный URL");
             ctx.sessionAttribute("flash-type", "danger");
             ctx.redirect("/");
             return;
         }
 
-        String url = ProcessorUrl.buildUrl(paramUrl);
 
         List<Url> list = new QUrl().findList();
         for (Url oldUrl : list) {
