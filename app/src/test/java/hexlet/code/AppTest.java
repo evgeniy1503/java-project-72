@@ -78,6 +78,7 @@ class AppTest {
         HttpResponse<String> response = Unirest
                 .get(baseUrl + "/urls/1")
                 .asString();
+
         String body = response.getBody();
 
         assertThat(response.getStatus()).isEqualTo(200);
@@ -110,13 +111,16 @@ class AppTest {
                 .name.equalTo(url)
                 .findOne();
 
+        List<Url> urlList = new QUrl().findList();
+
         assertThat(chekUrl).isNotNull();
         assertThat(chekUrl.getName()).isEqualTo(url);
+        assertThat(urlList.size()).isEqualTo(3);
 
     }
 
     @Test
-    void testInCreateCorrectUrl() {
+    void testCreateIncorrectUrl() {
         String url = "htps://iq.ru";
 
         HttpResponse responsePost = Unirest
@@ -152,15 +156,19 @@ class AppTest {
                 .get(baseUrl + "/urls")
                 .asString();
 
+        List<Url> urlList = new QUrl().findList();
+
         String body = response.getBody();
 
         assertThat(response.getStatus()).isEqualTo(200);
         assertThat(body).contains(url);
         assertThat(body).contains("Страница уже существует");
+        assertThat(urlList.size()).isEqualTo(2);
     }
 
     @Test
     void testCheckUrl() {
+
         String url = "https://ok.ru";
 
 
@@ -180,10 +188,13 @@ class AppTest {
         List<UrlCheck> urlCheckList = new QUrlCheck().findList();
 
         assertThat(response.getStatus()).isEqualTo(200);
-        assertThat(body).contains("Социальная сеть Одноклассники");
         assertThat(body).contains("Страница успешно проверена");
         assertThat(urlCheckList.size()).isEqualTo(2);
 
     }
+    @Test
+    void testWithMockWeb() {
+    }
+
 
 }
