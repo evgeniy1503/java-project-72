@@ -1,7 +1,9 @@
 package hexlet.code;
 
 import hexlet.code.domain.Url;
+import hexlet.code.domain.UrlCheck;
 import hexlet.code.domain.query.QUrl;
+import hexlet.code.domain.query.QUrlCheck;
 import io.ebean.DB;
 
 import io.ebean.Transaction;
@@ -15,6 +17,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -85,7 +89,7 @@ class AppTest {
     void testCreateCorrectUrl() {
         String url = "https://iq.ru";
 
-        HttpResponse<String> responsePost = Unirest
+        HttpResponse responsePost = Unirest
                 .post(baseUrl + "/urls")
                 .field("url", url)
                 .asEmpty();
@@ -115,7 +119,7 @@ class AppTest {
     void testInCreateCorrectUrl() {
         String url = "htps://iq.ru";
 
-        HttpResponse<String> responsePost = Unirest
+        HttpResponse responsePost = Unirest
                 .post(baseUrl + "/urls")
                 .field("url", url)
                 .asEmpty();
@@ -137,7 +141,7 @@ class AppTest {
     void testCreateDoubleUrl() {
         String url = "https://ok.ru";
 
-        HttpResponse<String> responsePost = Unirest
+        HttpResponse responsePost = Unirest
                 .post(baseUrl + "/urls")
                 .field("url", url)
                 .asEmpty();
@@ -153,6 +157,33 @@ class AppTest {
         assertThat(response.getStatus()).isEqualTo(200);
         assertThat(body).contains(url);
         assertThat(body).contains("Страница уже существует");
+    }
+
+    @Test
+    void testCheckUrl() {
+        String url = "https://ok.ru";
+
+
+        HttpResponse responsePost = Unirest
+                .post(baseUrl + "/urls/2/checks")
+                .asEmpty();
+
+        assertThat(responsePost.getStatus()).isEqualTo(302);
+        assertThat(responsePost.getHeaders().getFirst("Location")).isEqualTo("/urls/2");
+
+        HttpResponse<String> response = Unirest
+                .get(baseUrl + "/urls/2")
+                .asString();
+
+        String body = response.getBody();
+
+        List<UrlCheck> urlCheckList = new QUrlCheck().findList();
+
+        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(body).contains("Социальная сеть Одноклассники");
+        assertThat(body).contains("Страница успешно проверена");
+        assertThat(urlCheckList.size()).isEqualTo(2);
+
     }
 
 }

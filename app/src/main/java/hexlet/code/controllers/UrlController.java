@@ -117,8 +117,6 @@ public final class UrlController {
         urlCheck.setUrl(url);
         urlCheck.save();
 
-        System.out.println("-------------------->  " + url.getUrlCheck().size());
-
         ctx.sessionAttribute("flash", "Страница успешно проверена");
         ctx.sessionAttribute("flash-type", "success");
         ctx.redirect("/urls/" + id);
