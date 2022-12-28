@@ -4,7 +4,6 @@ import hexlet.code.domain.Url;
 import hexlet.code.domain.UrlCheck;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
-import org.apache.commons.validator.routines.UrlValidator;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
