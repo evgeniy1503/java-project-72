@@ -6,6 +6,10 @@ import hexlet.code.domain.query.QUrl;
 import hexlet.code.utils.ProcessorUrl;
 import io.ebean.PagedList;
 import io.javalin.http.Handler;
+import io.javalin.http.NotFoundResponse;
+import kong.unirest.HttpResponse;
+import kong.unirest.Unirest;
+import kong.unirest.UnirestException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,9 +19,9 @@ public final class UrlController {
 
     public static Handler addUrl = ctx -> {
 
-        String url = ProcessorUrl.getUrl(ctx.formParam("url"));
+        String normalizedUrl = ProcessorUrl.getUrl(ctx.formParam("url"));
 
-        if (url == null) {
+        if (normalizedUrl == null) {
             ctx.sessionAttribute("flash", "Некорректный URL");
             ctx.sessionAttribute("flash-type", "danger");
             ctx.redirect("/");
@@ -25,21 +29,18 @@ public final class UrlController {
         }
 
 
-        List<Url> list = new QUrl().findList();
-        for (Url oldUrl : list) {
-            if (oldUrl.getName().equals(url)) {
-                ctx.sessionAttribute("flash", "Страница уже существует");
-                ctx.sessionAttribute("flash-type", "info");
-                ctx.redirect("/urls");
-                return;
-            }
+        Url url = new QUrl().name.iequalTo(normalizedUrl).findOne();
+        if (url != null) {
+            ctx.sessionAttribute("flash", "Страница уже существует");
+            ctx.sessionAttribute("flash-type", "info");
+            ctx.redirect("/urls");
+        } else {
+            Url newUrl = new Url(normalizedUrl);
+            newUrl.save();
+            ctx.sessionAttribute("flash", "Страница успешно добавлена");
+            ctx.sessionAttribute("flash-type", "success");
+            ctx.redirect("/urls");
         }
-
-        Url newUrl = new Url(url);
-        newUrl.save();
-        ctx.sessionAttribute("flash", "Страница успешно добавлена");
-        ctx.sessionAttribute("flash-type", "success");
-        ctx.redirect("/urls");
     };
 
     public static Handler listUrls = ctx -> {
@@ -78,6 +79,9 @@ public final class UrlController {
 
         Url url = new QUrl()
                 .id.equalTo(id)
+                .urlCheck.fetch()
+                .orderBy()
+                    .urlCheck.createdAt.desc()
                 .findOne();
 
         List<UrlCheck> checkList = url.getUrlCheck();
@@ -94,18 +98,24 @@ public final class UrlController {
                 .id.equalTo(id)
                 .findOne();
 
-        if (!ProcessorUrl.haveConnect(url)) {
+        if (url == null) {
+            throw new NotFoundResponse();
+        }
+
+        try {
+            HttpResponse<String> httpResponse = Unirest
+                    .get(url.getName())
+                    .asString();
+            UrlCheck newUrlCheck = ProcessorUrl.buildUrlCheck(httpResponse);
+            url.getUrlCheck().add(newUrlCheck);
+            newUrlCheck.save();
+            url.save();
+        } catch (Exception e) {
             ctx.sessionAttribute("flash", "Не корректный хост");
             ctx.sessionAttribute("flash-type", "danger");
             ctx.redirect("/urls/" + id);
-            return;
         }
 
-        String nameUrl = url.getName();
-
-        UrlCheck urlCheck = ProcessorUrl.buildUrlCheck(nameUrl);
-        urlCheck.setUrl(url);
-        urlCheck.save();
 
         ctx.sessionAttribute("flash", "Страница успешно проверена");
         ctx.sessionAttribute("flash-type", "success");

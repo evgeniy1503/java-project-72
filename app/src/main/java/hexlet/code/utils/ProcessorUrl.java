@@ -1,15 +1,12 @@
 package hexlet.code.utils;
 
-import hexlet.code.domain.Url;
 import hexlet.code.domain.UrlCheck;
+
 import kong.unirest.HttpResponse;
-import kong.unirest.Unirest;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -23,35 +20,12 @@ public class ProcessorUrl {
         }
     }
 
-    public static boolean haveConnect(Url url) throws IOException {
-
-        boolean checkConnect = false;
-
-        URL urlCorrect = new URL(url.getName());
-
-        HttpURLConnection connection = (HttpURLConnection) urlCorrect.openConnection();
-        try {
-            connection.setRequestMethod("GET");
-            connection.connect();
-            checkConnect = true;
-        } catch (Exception e) {
-            connection.disconnect();
-        } finally {
-            connection.disconnect();
-        }
-
-        return checkConnect;
-    }
-
-    public static UrlCheck buildUrlCheck(String nameUrl) {
-
-        HttpResponse<String> httpResponse = Unirest
-                .get(nameUrl)
-                .asString();
+    public static UrlCheck buildUrlCheck(HttpResponse<String> httpResponse) {
 
         Integer statusCode = httpResponse.getStatus();
 
         String body = httpResponse.getBody();
+
         Document document = Jsoup.parse(body);
 
         String title = document.title();
@@ -62,12 +36,6 @@ public class ProcessorUrl {
         Element metaTag = document.getElementsByAttributeValue("name", "description").first();
         String description = metaTag != null ? metaTag.attr("content") : "";
 
-        UrlCheck urlCheck = new UrlCheck();
-        urlCheck.setStatusCode(statusCode);
-        urlCheck.setTitle(title);
-        urlCheck.setH1(h1);
-        urlCheck.setDescription(description);
-
-        return urlCheck;
+        return new UrlCheck(statusCode, title, h1, description);
     }
 }
