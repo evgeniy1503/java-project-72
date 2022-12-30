@@ -12,6 +12,7 @@ import io.javalin.Javalin;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 
+import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -194,6 +195,9 @@ class AppTest {
     }
     @Test
     void testWithMockWeb() {
+
+        MockWebServer server = new MockWebServer();
+
     }
 
 
