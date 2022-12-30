@@ -3,14 +3,19 @@ package hexlet.code.controllers;
 import hexlet.code.domain.Url;
 import hexlet.code.domain.UrlCheck;
 import hexlet.code.domain.query.QUrl;
-import hexlet.code.utils.ProcessorUrl;
+
 import io.ebean.PagedList;
 import io.javalin.http.Handler;
 import io.javalin.http.NotFoundResponse;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
-import kong.unirest.UnirestException;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -19,7 +24,7 @@ public final class UrlController {
 
     public static Handler addUrl = ctx -> {
 
-        String normalizedUrl = ProcessorUrl.getUrl(ctx.formParam("url"));
+        String normalizedUrl = getUrl(ctx.formParam("url"));
 
         if (normalizedUrl == null) {
             ctx.sessionAttribute("flash", "Некорректный URL");
@@ -106,7 +111,7 @@ public final class UrlController {
             HttpResponse<String> httpResponse = Unirest
                     .get(url.getName())
                     .asString();
-            UrlCheck newUrlCheck = ProcessorUrl.buildUrlCheck(httpResponse);
+            UrlCheck newUrlCheck = buildUrlCheck(httpResponse);
             url.getUrlCheck().add(newUrlCheck);
             newUrlCheck.save();
             url.save();
@@ -121,5 +126,33 @@ public final class UrlController {
         ctx.sessionAttribute("flash-type", "success");
         ctx.redirect("/urls/" + id);
     };
+
+    public static String getUrl(String urlParam) throws MalformedURLException {
+        if (!(urlParam.startsWith("https") || urlParam.startsWith("http"))) {
+            return null;
+        } else {
+            URL fullUrl = new URL(urlParam);
+            return fullUrl.getProtocol() + "://" + fullUrl.getAuthority();
+        }
+    }
+
+    public static UrlCheck buildUrlCheck(HttpResponse<String> httpResponse) {
+
+        Integer statusCode = httpResponse.getStatus();
+
+        String body = httpResponse.getBody();
+
+        Document document = Jsoup.parse(body);
+
+        String title = document.title();
+
+        Element h1Tag = document.select("h1").first();
+        String h1 = h1Tag != null ? h1Tag.text() : "";
+
+        Element metaTag = document.getElementsByAttributeValue("name", "description").first();
+        String description = metaTag != null ? metaTag.attr("content") : "";
+
+        return new UrlCheck(statusCode, title, h1, description);
+    }
 
 }
