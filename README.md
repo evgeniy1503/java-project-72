@@ -5,7 +5,7 @@
 <a href="https://codeclimate.com/github/evgeniy1503/java-project-72/test_coverage"><img src="https://api.codeclimate.com/v1/badges/f73a62529c82144c65bd/test_coverage" /></a>
 
 <h2>Описание</h2>
-<p><a href="https://java-project-72-appenv-4a78.up.railway.app/"><u><b>Page Analyzer</b></u></a> – сайт, который анализирует указанные страницы на SEO пригодность.</p>
+<p><a href="https://java-project-72-appenv-4a78.up.railway.app/"><u><b>Анализатор страниц</b></u></a> – сайт, который анализирует указанные страницы на SEO пригодность.</p>
 
 <h3>Главаня страница</h3>
 
