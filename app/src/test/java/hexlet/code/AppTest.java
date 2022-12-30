@@ -3,22 +3,25 @@ package hexlet.code;
 import hexlet.code.domain.Url;
 import hexlet.code.domain.UrlCheck;
 import hexlet.code.domain.query.QUrl;
-import hexlet.code.domain.query.QUrlCheck;
 import io.ebean.DB;
 
-import io.ebean.Transaction;
+import io.ebean.Database;
 import io.javalin.Javalin;
 
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 
+import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,32 +30,42 @@ class AppTest {
 
     private static Javalin app;
     private static String baseUrl;
-    private static Transaction transaction;
+    private static Database database;
+
+    private static MockWebServer mockWebServer;
 
     @BeforeAll
-    public static void beforeAll() {
+    public static void beforeAll() throws IOException {
         app = App.getApp();
         app.start(0);
         int port = app.port();
         baseUrl = "http://localhost:" + port;
+        database = DB.getDefault();
+
+        mockWebServer = new MockWebServer();
+
+        MockResponse mockResponse = new MockResponse()
+                .setBody(Files.readString(Paths.get("./src/test/resources/FakePage.html"), StandardCharsets.UTF_8))
+                .setResponseCode(400);
+        mockWebServer.enqueue(mockResponse);
+        mockWebServer.start();
+
+
+
     }
 
     @AfterAll
-    public static void afterAll() {
+    public static void afterAll() throws IOException {
         app.stop();
+        mockWebServer.shutdown();
     }
 
-    // При использовании БД запускать каждый тест в транзакции -
-    // является хорошей практикой
     @BeforeEach
     void beforeEach() {
-        transaction = DB.beginTransaction();
+        database.script().run("/truncate.sql");
+        database.script().run("/seed.sql");
     }
 
-    @AfterEach
-    void afterEach() {
-        transaction.rollback();
-    }
 
     @Test
     void testWelcomePage() {
@@ -170,35 +183,40 @@ class AppTest {
     @Test
     void testCheckUrl() {
 
-        String url = "https://ok.ru";
-
+        String mockUrl = mockWebServer.url("/").toString();
 
         HttpResponse responsePost = Unirest
-                .post(baseUrl + "/urls/2/checks")
+                .post(baseUrl + "/urls")
+                .field("url", mockUrl)
                 .asEmpty();
 
-        assertThat(responsePost.getStatus()).isEqualTo(302);
-        assertThat(responsePost.getHeaders().getFirst("Location")).isEqualTo("/urls/2");
+        List<Url> list = new QUrl().findList();
 
-        HttpResponse<String> response = Unirest
-                .get(baseUrl + "/urls/2")
+        assertThat(responsePost.getStatus()).isEqualTo(302);
+        assertThat(list.size()).isEqualTo(3);
+
+        HttpResponse responseCheck = Unirest
+                .post(baseUrl + "/urls/3/checks")
+                .asEmpty();
+
+        assertThat(responseCheck.getStatus()).isEqualTo(302);
+
+        HttpResponse<String> responseShow = Unirest
+                .get(baseUrl + "/urls/3")
                 .asString();
 
-        String body = response.getBody();
+        Url url = new QUrl().name.iequalTo(mockUrl.substring(0, mockUrl.length() - 1))
+                .findOne();
 
-        List<UrlCheck> urlCheckList = new QUrlCheck().findList();
+        UrlCheck urlCheck = url.getUrlCheck().get(0);
 
-        assertThat(response.getStatus()).isEqualTo(200);
-        assertThat(body).contains("Страница успешно проверена");
-        assertThat(urlCheckList.size()).isEqualTo(2);
+        assertThat(responseShow.getStatus()).isEqualTo(200);
 
-    }
-    @Test
-    void testWithMockWeb() {
+        assertThat(urlCheck.getStatusCode()).isEqualTo(400);
+        assertThat(urlCheck.getTitle()).isEqualTo("Test title");
+        assertThat(urlCheck.getH1()).isEqualTo("Test H1");
 
-        MockWebServer server = new MockWebServer();
 
     }
-
 
 }

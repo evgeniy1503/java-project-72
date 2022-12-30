@@ -16,6 +16,7 @@ import java.util.List;
 @Getter
 @Entity
 public final class Url extends Model {
+
     @Id
     @GeneratedValue
     private Long id;
@@ -24,6 +25,7 @@ public final class Url extends Model {
 
     @WhenCreated
     private Instant createdAt;
+
     @OneToMany(cascade = CascadeType.ALL)
     private List<UrlCheck> urlCheck;
 

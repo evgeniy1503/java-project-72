@@ -33,7 +33,6 @@ public final class UrlController {
             return;
         }
 
-
         Url url = new QUrl().name.iequalTo(normalizedUrl).findOne();
         if (url != null) {
             ctx.sessionAttribute("flash", "Страница уже существует");
@@ -46,6 +45,7 @@ public final class UrlController {
             ctx.sessionAttribute("flash-type", "success");
             ctx.redirect("/urls");
         }
+
     };
 
     public static Handler listUrls = ctx -> {
@@ -77,9 +77,11 @@ public final class UrlController {
         ctx.attribute("pages", pages);
         ctx.attribute("currentPage", currentPage);
         ctx.render("urls/index.html");
+
     };
 
     public static Handler showUrl = ctx -> {
+
         long id = ctx.pathParamAsClass("id", Long.class).getOrDefault(null);
 
         Url url = new QUrl()
@@ -93,9 +95,11 @@ public final class UrlController {
         ctx.attribute("url", url);
         ctx.attribute("urlChecks", checkList);
         ctx.render("urls/show.html");
+
     };
 
     public static Handler checksUrl = ctx -> {
+
         long id = ctx.pathParamAsClass("id", Long.class).getOrDefault(null);
 
 
@@ -113,14 +117,12 @@ public final class UrlController {
                     .asString();
             UrlCheck newUrlCheck = buildUrlCheck(httpResponse);
             url.getUrlCheck().add(newUrlCheck);
-            newUrlCheck.save();
             url.save();
         } catch (Exception e) {
             ctx.sessionAttribute("flash", "Не корректный хост");
             ctx.sessionAttribute("flash-type", "danger");
             ctx.redirect("/urls/" + id);
         }
-
 
         ctx.sessionAttribute("flash", "Страница успешно проверена");
         ctx.sessionAttribute("flash-type", "success");
