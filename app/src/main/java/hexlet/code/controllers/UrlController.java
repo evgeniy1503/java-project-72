@@ -102,7 +102,6 @@ public final class UrlController {
 
         long id = ctx.pathParamAsClass("id", Long.class).getOrDefault(null);
 
-
         Url url = new QUrl()
                 .id.equalTo(id)
                 .findOne();
@@ -118,15 +117,14 @@ public final class UrlController {
             UrlCheck newUrlCheck = buildUrlCheck(httpResponse);
             url.getUrlCheck().add(newUrlCheck);
             url.save();
+            ctx.sessionAttribute("flash", "Страница успешно проверена");
+            ctx.sessionAttribute("flash-type", "success");
+            ctx.redirect("/urls/" + id);
         } catch (Exception e) {
             ctx.sessionAttribute("flash", "Не корректный хост");
             ctx.sessionAttribute("flash-type", "danger");
             ctx.redirect("/urls/" + id);
         }
-
-        ctx.sessionAttribute("flash", "Страница успешно проверена");
-        ctx.sessionAttribute("flash-type", "success");
-        ctx.redirect("/urls/" + id);
     };
 
     public static String getUrl(String urlParam) throws MalformedURLException {
