@@ -10,6 +10,7 @@ import io.javalin.http.NotFoundResponse;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 
+import kong.unirest.UnirestException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -119,12 +120,14 @@ public final class UrlController {
             url.save();
             ctx.sessionAttribute("flash", "Страница успешно проверена");
             ctx.sessionAttribute("flash-type", "success");
-            ctx.redirect("/urls/" + id);
-        } catch (Exception e) {
-            ctx.sessionAttribute("flash", "Не корректный хост");
+        } catch (UnirestException e) {
+            ctx.sessionAttribute("flash", "Не корректный адрес");
             ctx.sessionAttribute("flash-type", "danger");
-            ctx.redirect("/urls/" + id);
+        } catch (Exception e) {
+            ctx.sessionAttribute("flash", e.getMessage());
+            ctx.sessionAttribute("flash-type", "danger");
         }
+        ctx.redirect("/urls/" + id);
     };
 
     public static String getUrl(String urlParam) throws MalformedURLException {

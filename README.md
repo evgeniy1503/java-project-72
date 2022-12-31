@@ -7,7 +7,7 @@
 <h2>Описание</h2>
 <p><a href="https://java-project-72-appenv-4a78.up.railway.app/"><u><b>Анализатор страниц</b></u></a> – сайт, который анализирует указанные страницы на SEO пригодность.</p>
 
-<h3>Главаня страница</h3>
+<h3>Главная страница</h3>
 
 ![Start page](https://github.com/evgeniy1503/java-project-72/blob/main/app/src/main/resources/other/scren1.png)
 
