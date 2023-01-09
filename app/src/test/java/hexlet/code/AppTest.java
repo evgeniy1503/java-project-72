@@ -46,7 +46,7 @@ class AppTest {
 
         MockResponse mockResponse = new MockResponse()
                 .setBody(Files.readString(Paths.get("./src/test/resources/FakePage.html"), StandardCharsets.UTF_8))
-                .setResponseCode(400);
+                .setResponseCode(200);
         mockWebServer.enqueue(mockResponse);
         mockWebServer.start();
 
@@ -212,7 +212,7 @@ class AppTest {
 
         assertThat(responseShow.getStatus()).isEqualTo(200);
 
-        assertThat(urlCheck.getStatusCode()).isEqualTo(400);
+        assertThat(urlCheck.getStatusCode()).isEqualTo(200);
         assertThat(urlCheck.getTitle()).isEqualTo("Test title");
         assertThat(urlCheck.getH1()).isEqualTo("Test H1");
 
